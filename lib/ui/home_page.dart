@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:submission_1/data/model/restaurant.dart';
 import 'package:submission_1/data/model/restaurants.dart';
+import 'package:submission_1/ui/detail_page.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = '/home_page';
@@ -131,6 +132,7 @@ class _HomePageState extends State<HomePage> {
         body: (notFoundSearch)
             ? _buildErrorWidget()
             : ListView.builder(
+                physics: BouncingScrollPhysics(),
                 controller: controller,
                 itemCount: restaurantFilteredList.length,
                 itemBuilder: (context, index) {
@@ -173,11 +175,8 @@ class _HomePageState extends State<HomePage> {
               color: Colors.green[300],
             ),
             Text(
-              'No Data Found',
-              style: TextStyle(
-                fontSize: 25,
-                fontWeight: FontWeight.bold
-              ),
+              'No Restaurant Found',
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             )
           ],
         ),
@@ -187,25 +186,32 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildRestaurantsItem(BuildContext context, Restaurants restaurants) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.pushNamed(context, DetailPage.routeName,
+            arguments: restaurants);
+      },
       child: Container(
         height: 150,
         margin: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(color: Colors.green.withAlpha(200), blurRadius: 7)
-            ]),
+          borderRadius: BorderRadius.all(Radius.circular(20)),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(color: Colors.green.withAlpha(200), blurRadius: 7)
+          ],
+        ),
         child: Container(
           margin: EdgeInsets.only(top: 15, bottom: 15),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              CircleAvatar(
-                radius: 100,
-                backgroundImage: NetworkImage(
-                  restaurants.pictureId,
+              Hero(
+                tag: restaurants.id,
+                child: CircleAvatar(
+                  radius: 100,
+                  backgroundImage: NetworkImage(
+                    restaurants.pictureId,
+                  ),
                 ),
               ),
               Column(
@@ -245,5 +251,10 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+
   }
 }
