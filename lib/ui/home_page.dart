@@ -20,26 +20,12 @@ class _HomePageState extends State<HomePage> {
   Icon searchIcon = Icon(Icons.search);
   Widget appBarTitle =
       Text('Restaurants', style: TextStyle(color: Colors.black));
-
-  _HomePageState() {
-    filter.addListener(() {
-      if (filter.text.isEmpty) {
-        setState(() {
-          searchText = "";
-          restaurantFilteredList = restaurantList;
-        });
-      } else {
-        setState(() {
-          searchText = filter.text;
-        });
-      }
-    });
-  }
+  bool notFoundSearch = false;
 
   @override
   void initState() {
-    super.initState();
     getListRestaurant();
+    super.initState();
 
     controller.addListener(() {
       double value = controller.offset / 139;
@@ -47,6 +33,18 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         topContainer = value;
       });
+    });
+    filter.addListener(() {
+      if (filter.text.isEmpty) {
+        setState(() {
+          searchText = "";
+        });
+      } else {
+        setState(() {
+          searchText = filter.text;
+        });
+      }
+      checkFilter();
     });
   }
 
@@ -79,6 +77,7 @@ class _HomePageState extends State<HomePage> {
         appBarTitle =
             Text('Restaurants', style: TextStyle(color: Colors.black));
         restaurantFilteredList = restaurantList;
+        notFoundSearch = false;
         filter.clear();
       }
     });
@@ -92,13 +91,19 @@ class _HomePageState extends State<HomePage> {
           filterList.add(resto);
         }
       });
-      restaurantFilteredList = filterList;
+      if (filterList.isEmpty) {
+        notFoundSearch = true;
+      } else {
+        restaurantFilteredList = filterList;
+        notFoundSearch = false;
+      }
+    } else {
+      restaurantFilteredList = restaurantList;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    checkFilter();
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -123,32 +128,58 @@ class _HomePageState extends State<HomePage> {
             child: appBarTitle,
           ),
         ),
-        body: ListView.builder(
-          controller: controller,
-          itemCount: restaurantFilteredList.length,
-          itemBuilder: (context, index) {
-            double scale = 1.0;
-            if (topContainer > 0.5) {
-              scale = index + 0.8 - topContainer;
-              if (scale < 0) {
-                scale = 0;
-              } else if (scale > 1) {
-                scale = 1;
-              }
-            }
-            return Opacity(
-              opacity: scale,
-              child: Transform(
-                alignment: Alignment.bottomCenter,
-                transform: Matrix4.identity()..scale(scale, scale),
-                child: Align(
-                    heightFactor: 0.8,
-                    alignment: Alignment.topCenter,
-                    child: _buildRestaurantsItem(
-                        context, restaurantFilteredList[index])),
+        body: (notFoundSearch)
+            ? _buildErrorWidget()
+            : ListView.builder(
+                controller: controller,
+                itemCount: restaurantFilteredList.length,
+                itemBuilder: (context, index) {
+                  double scale = 1.0;
+                  if (topContainer > 0.5) {
+                    scale = index + 0.8 - topContainer;
+                    if (scale < 0) {
+                      scale = 0;
+                    } else if (scale > 1) {
+                      scale = 1;
+                    }
+                  }
+                  return Opacity(
+                    opacity: scale,
+                    child: Transform(
+                      alignment: Alignment.bottomCenter,
+                      transform: Matrix4.identity()..scale(scale, scale),
+                      child: Align(
+                          heightFactor: 0.8,
+                          alignment: Alignment.topCenter,
+                          child: _buildRestaurantsItem(
+                              context, restaurantFilteredList[index])),
+                    ),
+                  );
+                },
               ),
-            );
-          },
+      ),
+    );
+  }
+
+  Widget _buildErrorWidget() {
+    return Container(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error,
+              size: 75,
+              color: Colors.green[300],
+            ),
+            Text(
+              'No Data Found',
+              style: TextStyle(
+                fontSize: 25,
+                fontWeight: FontWeight.bold
+              ),
+            )
+          ],
         ),
       ),
     );
@@ -196,8 +227,10 @@ class _HomePageState extends State<HomePage> {
                       ),
                       Text(
                         restaurants.rating.toString(),
-                        style:
-                            TextStyle(fontSize: 15, color: Colors.green[300]),
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.green[300],
+                            fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -206,7 +239,7 @@ class _HomePageState extends State<HomePage> {
                     style: TextStyle(fontSize: 18, color: Colors.grey),
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),
