@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:submission_1/common/styles.dart';
 
 class IconBox extends StatelessWidget {
   final Widget child;
   final double width, height;
+
   const IconBox({
     Key? key,
-    required this.child, required this.width, required this.height,
+    required this.child,
+    required this.width,
+    required this.height,
   }) : super(key: key);
 
   @override
@@ -14,7 +18,7 @@ class IconBox extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: primaryColor,
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(color: Colors.green.withAlpha(200), blurRadius: 7)

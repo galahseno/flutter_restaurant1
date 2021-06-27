@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:submission_1/common/styles.dart';
 import 'package:submission_1/data/model/drinks.dart';
 import 'package:submission_1/data/model/foods.dart';
 import 'package:submission_1/data/model/restaurants.dart';
-import 'package:flutter/material.dart';
-import 'package:submission_1/ui/utils/Icon_box.dart';
+import 'package:submission_1/ui/widgets/Icon_box.dart';
 
 class DetailPage extends StatefulWidget {
   static const routeName = 'detail_page';
@@ -30,7 +31,7 @@ class _DetailPageState extends State<DetailPage> {
       child: Scaffold(
         body: SingleChildScrollView(
           child: Container(
-              color: Colors.white,
+              color: primaryColor,
               height: size.height,
               width: size.width,
               child: Column(
@@ -167,7 +168,7 @@ class _DetailPageState extends State<DetailPage> {
       if (favoriteIcon.icon == Icons.favorite_border) {
         favoriteIcon = Icon(
           Icons.favorite,
-          color: Colors.green[300],
+          color: secondaryColor,
         );
         final snackBar = SnackBar(content: Text('Add to Dummy Favorite'));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -177,10 +178,5 @@ class _DetailPageState extends State<DetailPage> {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     });
-  }
-
-  @override
-  void dispose() {
-
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:submission_1/common/styles.dart';
 import 'package:submission_1/data/model/restaurant.dart';
 import 'package:submission_1/data/model/restaurants.dart';
 import 'package:submission_1/ui/detail_page.dart';
@@ -64,12 +65,12 @@ class _HomePageState extends State<HomePage> {
         searchIcon = Icon(Icons.close);
         appBarTitle = TextField(
           controller: filter,
-          cursorColor: Colors.green[300],
+          cursorColor: secondaryColor,
           decoration: InputDecoration(
               border: InputBorder.none,
               prefixIcon: Icon(
                 Icons.search,
-                color: Colors.green[300],
+                color: secondaryColor,
               ),
               hintText: 'Search Restaurants'),
         );
@@ -110,7 +111,6 @@ class _HomePageState extends State<HomePage> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           toolbarHeight: 75,
-          elevation: 0,
           leading: Icon(
             Icons.restaurant,
             color: Colors.black,
@@ -124,7 +124,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: searchPress,
             ),
           ],
-          backgroundColor: Colors.white,
+          backgroundColor: primaryColor,
           title: Center(
             child: appBarTitle,
           ),
@@ -172,7 +172,7 @@ class _HomePageState extends State<HomePage> {
             Icon(
               Icons.error,
               size: 75,
-              color: Colors.green[300],
+              color: secondaryColor,
             ),
             Text(
               'No Restaurant Found',
@@ -255,6 +255,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-
+    super.dispose();
+    controller.dispose();
+    filter.dispose();
   }
 }
